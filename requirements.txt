@@ -1,0 +1,2 @@
+selenium==3.3.3
+wget==3.2

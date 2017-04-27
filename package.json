@@ -1,0 +1,22 @@
+{
+  "name": "tv-crawler",
+  "version": "1.0.0",
+  "description": "A Python bot for scraping tv and movie episodes from various websites",
+  "main": "main.py",
+  "scripts": {
+    "start" : "python fmovie.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "watch5s",
+    "fmovie",
+    "TV",
+    "movie",
+    "Bot"
+  ],
+  "author": "Jarel Pellew",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.14"
+  }
+}
