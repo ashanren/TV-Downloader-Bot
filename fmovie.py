@@ -1,4 +1,6 @@
 import json
+from pyvirtualdisplay import Display
+import wget
 import os
 import time
 from selenium import webdriver
@@ -9,8 +11,6 @@ from selenium.webdriver.support import expected_conditions as EC
 #error checking
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
-
-import wget
 
 def popupHandler():
     #removal of popup
@@ -27,19 +27,8 @@ def openload():
     pops = driver.find_element_by_id('videooverlay')
     pops.click()
     return driver.find_element_by_tag_name('video').get_attribute('src')
-    #popupHandler()
-    #pops.click()
-    #time.sleep(1)
-    #pops.click()
-    #driver.switch_to.default_content()
-    #driver.switch_to.frame(driver.find_element_by_xpath('//iframe[@webkitallowfullscreen="true"]'))
-    #return driver.find_element_by_tag_name('video').get_attribute('src')
 
-    
-    #hopefully find the src of the video
-
-    
-    return "Hello There"
+url = []
 #phantomdriver = os.path.abspath('node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs')
 chromedriver = os.path.abspath('chromedriver')
 #os.environ["webdriver.phantomjs.driver"] = phantomdriver
@@ -76,7 +65,6 @@ for show in files: #loops though all show files in conf
                 driver.get(name)
             except TimeoutException:
                 driver.execute_script("window.stop();")
-            #obj.click()
             print "Correct Season found and Clicked"
             break
 
@@ -87,21 +75,25 @@ for show in files: #loops though all show files in conf
             popupHandler()
         except Exception as e:
             print "There is no more button"
+            driver.find_element_by_xpath('/html/body/div[1]/div[2]/div[1]/div[5]/div[2]/div[5]/a').click()
+            popupHandler()
 
 
         #clicks correct episode
-        popupHandler()
         if len(ep) == 1:
             ep = '0'+ep
         try:
             driver.find_element_by_xpath('//li/a[contains(@href, "episode-'+ep+'")]').click()
+            popupHandler()
         except TimeoutException:
             driver.execute_script("window.stop();")
         except NoSuchElementException:
             try:
                 driver.find_element_by_xpath('//li/a[contains(@href, "episode-'+ep[1]+'")]').click()
+                popupHandler()
             except TimeoutException:
                 driver.execute_script("window.stop();")
+                popupHandler()
         popupHandler()
         #download episode
         #trying to switch to iframe
@@ -110,12 +102,24 @@ for show in files: #loops though all show files in conf
 
         #checks to see if google video or openload
         try:
+            print driver.page_source
+            #WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.TAG_NAME, "video")))
+            print "src for video loaded"
             link = driver.find_element_by_tag_name("video").get_attribute('src')
         except NoSuchElementException:
             link = openload()
         print "Link to Episode "+ep+"Found! : "
         print link
-
+        url.append(link)
         print "Switching back to main page"
         driver.switch_to.default_content()
+    i = 0
+    for u in url:
+        title = show["name"].title() + " - Season " + show["season"] + " Episode " + show["episodes"][i]+ ".mp4"
+        wget.download(u, out=title)
+        i += 1
+        #subprocess.Popen("wget -4 --no-dns-cache "+link, shell=True, executable='/bin/bash')
+
+        
+
 driver.quit
