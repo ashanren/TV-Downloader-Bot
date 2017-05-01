@@ -107,7 +107,6 @@ for show in files: #loops though all show files in conf
 
         #checks to see if google video or openload
         try:
-            print driver.page_source
             #WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.TAG_NAME, "video")))
             print "src for video loaded"
             link = driver.find_element_by_tag_name("video").get_attribute('src')
