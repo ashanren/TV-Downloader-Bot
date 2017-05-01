@@ -1,6 +1,7 @@
 # TV-Downloader-Bot
 a few simple bots to download tv shows from various websites. Currently only fmovies
 
+Websites have been recently updated so bot not working currently
 # Core Dependencies
 -pip
 
@@ -20,5 +21,5 @@ a few simple bots to download tv shows from various websites. Currently only fmo
 
 # Usage Instructions
 
-Go into `video_files.conf` There is a sample of the format this should be in. Type in the name of the show, season, and episodes you want to download from that season. Copy and paste That general format to download multiple seasons. Make sure to keep this file in json format. Once you have completed the conf file, in the terminal type npm start and the shows should begin to download. In some random case, it will break once. Don't panic just run it again and it will work.(Fixing currently)
+Go into `video_files.conf` There is a sample of the format this should be in. Type in the name of the show, season, and episodes you want to download from that season. Copy and paste That general format to download multiple seasons. Make sure to keep this file in json format. 
 

@@ -44,10 +44,11 @@ for show in files: #loops though all show files in conf
     print "Currently Downloading Episodes of " + show["name"] +" season "+show["season"]
     driver = webdriver.Chrome(chromedriver)
     #driver = webdriver.PhantomJS(phantomdriver)
-    driver.set_page_load_timeout(10)#setting timeout error to stop pending requests
+    driver.set_page_load_timeout(5)#setting timeout error to stop pending requests
+    wait = WebDriverWait(driver, 10)
     driver.get('https://www.fmovies.io/search.html?keyword='+show["name"].replace(" ", "+"))
     try:
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "figure")))
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "figure")))
         print "Page with Season figures loads"
     except Exception as e:
         print "Error: "+ str(e)
@@ -68,6 +69,11 @@ for show in files: #loops though all show files in conf
             print "Correct Season found and Clicked"
             break
 
+#new way of finding Season
+#    try:
+#        driver.find_element_by_xpath('//a/h3[contains(text(), "'+ show["name"].title()+' - Season '+ show["season"]+'")]').click()
+#    except TimeoutException:
+#        driver.execute_script("window.stop();")
     for ep in show["episodes"]:
         try:
             print "Looking for more button"
@@ -77,7 +83,6 @@ for show in files: #loops though all show files in conf
             print "There is no more button"
             driver.find_element_by_xpath('/html/body/div[1]/div[2]/div[1]/div[5]/div[2]/div[5]/a').click()
             popupHandler()
-
 
         #clicks correct episode
         if len(ep) == 1:
@@ -122,4 +127,4 @@ for show in files: #loops though all show files in conf
 
         
 
-driver.quit
+driver.quit()
