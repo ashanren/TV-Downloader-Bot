@@ -1,8 +1,13 @@
 # TV-Downloader-Bot
-a few simple bots to download tv shows from various websites. Currently only fmovies
+
+a few simple bots to download tv shows from various websites
 
 Fmovie have been recently updated so bot not working currently
+
+Seriesonline is operational
+
 # Core Dependencies
+
 -pip
 
 -Node.js
