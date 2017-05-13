@@ -1,10 +1,11 @@
 # TV-Downloader-Bot
 
-a few simple bots to download tv shows from various websites
+Application to download tv shows and movies from various websites.
 
-Fmovie have been recently updated so bot not working currently
+Fmovie have been recently updated so bot not working currently.
 
-Seriesonline is operational
+Seriesonline is operational.
+
 
 # Core Dependencies
 
@@ -24,6 +25,8 @@ Seriesonline is operational
 
 5. Download latest version of [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/ "ChromeDriver Website") 
 
+6. Install Xvfb `sudo apt-get install Xvfb`
+
 # Usage Instructions
 
-Go into `video_files.conf` There is a sample of the format this should be in. Type in the name of the show, season, and episodes you want to download from that season. Copy and paste That general format to download multiple seasons. Make sure to keep this file in json format. Once finished type npm start to start downloading.
+Go into `video_files.conf` There is a sample of the format this should be in. Type in the name of the show, season, and episodes you want to download from that season. Copy and paste That general format to download multiple seasons. Make sure to keep this file in json format. Once finished type python main.py to start downloading. Currently only works on Linux.
