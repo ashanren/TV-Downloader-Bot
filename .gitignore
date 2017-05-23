@@ -1,0 +1,6 @@
+Downloads/
+node_modules/
+*.pyc
+video_files.conf
+chromedriver
+chromedriver_linux64
