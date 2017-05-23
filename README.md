@@ -29,4 +29,4 @@ Seriesonline is operational.
 
 # Usage Instructions
 
-Go into `video_files.conf` There is a sample of the format this should be in. Type in the name of the show, season, and episodes you want to download from that season. Copy and paste That general format to download multiple seasons. Make sure to keep this file in json format. Once finished type python main.py to start downloading. Currently only works on Linux.
+Go into `video_files.conf` There is a sample of the format this file should be in. Type in the name of the show, season, and episodes you want to download from that season. Copy and paste That general format to download multiple seasons. Make sure to keep this file in json format. Once finished type python main.py to start downloading. Headless functionality currently only works on Linux.

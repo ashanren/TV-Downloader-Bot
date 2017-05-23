@@ -1,4 +1,3 @@
-import json
 import wget
 import os
 import time
@@ -29,9 +28,11 @@ class seriesOnline():
         print "Starting script downloading episodes of " + self.show["name"] + " season " + self.show["season"]
         title = self.show["name"].lower().replace(" ","-")
         try:
-            self.driver.get('https://seriesonline.io/movie/search/'+title)
+            self.driver.get('https://seriesonline.is/movie/search/'+title)
         except TimeoutException:
-            self.driver.execute_script("return window.stop();")
+            print "Trying to bypass Timeout Exception"
+            #self.driver.execute_script("return window.stop();")
+        print "finished loading page"
         try:
             self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "ml-item")))
         #print "Season figure loads"
@@ -58,26 +59,27 @@ class seriesOnline():
         #find correct episode
         for ep in self.show["episodes"]:
             #this line needs to be replaced prob
-            servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep+'")]')
+            print self.driver.current_url
+            #going to correct episode
+            if self.driver.current_url[-2:-1] == "=":
+                self.driver.get(self.driver.current_url[:-1] + ep)
+            else:
+                self.driver.get(self.driver.current_url[:-2] + ep)
+            #servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep+'")]')
             if ep[0] == '0':
                 eTitle = title + " Episode " + ep[1] + ".mp4" 
             else:
                 eTitle = title + " Episode " + ep + ".mp4" 
-
-            #main server streaming down
-            #self.driver.find_element_by_xpath('//div[contains(text(),"Main server")]').click()
-            #self.popupHandler()
-            try:
-                servereps[0].click()
-            except TimeoutException:
-                self.driver.execute_script("return window.stop();")
-            except Exception as e:
-                servereps[1].click()
+            #try:
+            #    servereps[0].click()
+            #except TimeoutException:
+            #    self.driver.execute_script("return window.stop();")
+            #except Exception as e:
+            #    servereps[1].click()
             
             #moving to its own method for future use
             #switch to iframe
             print "Finding Video src"
-
             try:
                 link = self.googleVid()
             except Exception as e:
@@ -122,6 +124,6 @@ class seriesOnline():
 
     def downloadEpisode(self,link,eTitle):
             print "Downloading " + eTitle
-            wget.download(link, out=eTitle)
+            wget.download(link, out="Downloads/Shows/" + eTitle)
             print ""
             print eTitle + " finished"
