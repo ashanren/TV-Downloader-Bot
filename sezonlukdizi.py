@@ -23,6 +23,8 @@ class sezonlukdizi(bot):
     def start(self):
         print "Sezonlukdizi searching for " + self.show["name"] + " season " + self.show["season"]
         for ep in self.show["episodes"]:
+            if ep[0] == "0":
+                ep = ep[1]
             self.driver.get("http://sezonlukdizi.net/" + self.show["name"].lower().replace(" ", "-") + "/" + self.show["season"] + "-sezon-" + ep + "-bolum.html") 
 
     def close(self):

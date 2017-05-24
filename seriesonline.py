@@ -21,25 +21,27 @@ class seriesOnline():
         #display = Display(visible=0, size=(800,600))
         #display.start()
         self.driver = webdriver.Chrome(self.chromedriver)
-        self.driver.set_page_load_timeout(10)
+        self.driver.set_page_load_timeout(15)
         self.wait = WebDriverWait(self.driver, 10)
 
     def start(self):
         print "Starting script downloading episodes of " + self.show["name"] + " season " + self.show["season"]
         title = self.show["name"].lower().replace(" ","-")
+        #massive problems with this. Occasionally will hit timeout and everything else will go out of wack. Will need a solution for this
         try:
             self.driver.get('https://seriesonline.is/movie/search/'+title)
         except TimeoutException:
             print "Trying to bypass Timeout Exception"
-            #self.driver.execute_script("return window.stop();")
+            self.driver.execute_script("return window.stop();")
         print "finished loading page"
-        try:
-            self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "ml-item")))
-        #print "Season figure loads"
-        except Exception as e:
-            print "Error: "+ str(e)
+        #try:
+        #    self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "ml-item")))
+        #    print "Season figure loads"
+        #except Exception as e:
+        #    print "Error: "+ str(e)
     
         #popup handling
+        print "attempting to handle initial popup"
         self.driver.find_element_by_xpath('//*[@id="main"]/div/div[2]/div/div[1]/span').click()
         self.popupHandler()
         #find correct season
@@ -51,50 +53,64 @@ class seriesOnline():
         except TimeoutException:
             self.driver.execute_script("return window.stop();")
         self.popupHandler()
-    #go to episodes
+        #go to episodes
         try:
             self.driver.find_element_by_xpath('//a[contains(@href, "watching")]').click()
         except TimeoutException:
             self.driver.execute_script("return window.stop();")
         #find correct episode
         for ep in self.show["episodes"]:
-            #this line needs to be replaced prob
-            print self.driver.current_url
-            #going to correct episode
-            if self.driver.current_url[-2:-1] == "=":
-                self.driver.get(self.driver.current_url[:-1] + ep)
-            else:
-                self.driver.get(self.driver.current_url[:-2] + ep)
-            #servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep+'")]')
+            #bad option for finding current episode 
+            #if self.driver.current_url[-2:-1] == "=":
+            #    self.driver.get(self.driver.current_url[:-1] + ep)
+            #else:
+            #    self.driver.get(self.driver.current_url[:-2] + ep)
+            if len(ep) == 1:
+                ep = '0'+ep
+
+            #finds current episode link
+            try:
+                servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep+'")]')
+            except Exception as e:
+                servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep[1]+'")]')
+                
+            #Creates file name
             if ep[0] == '0':
                 eTitle = title + " Episode " + ep[1] + ".mp4" 
             else:
                 eTitle = title + " Episode " + ep + ".mp4" 
-            #try:
-            #    servereps[0].click()
-            #except TimeoutException:
-            #    self.driver.execute_script("return window.stop();")
-            #except Exception as e:
-            #    servereps[1].click()
+            #handles current issue with bar on the bottom of screen
+            try:
+                self.driver.find_element_by_xpath('//div[@class="thumb mvic-thumb"]').click()
+                self.popupHandler()
+            except Exception as e:
+                print "Can't find picture"
+            #clicks on proper episode
+            try:
+                servereps[0].click()
+            except TimeoutException:
+                self.driver.execute_script("return window.stop();")
+            except Exception as e:
+                print "Error: " + str(e)
             
-            #moving to its own method for future use
             #switch to iframe
             print "Finding Video src"
             try:
                 link = self.googleVid()
             except Exception as e:
                 link = self.openload()
+            #threading for multi downlaoding support. Need to add a limit of 3-4 downloads
             threading.Thread(target=self.downloadEpisode, args=(link,eTitle,)).start()
             print "Switching back to main page"
             self.driver.switch_to.default_content()
-        #self.driver.close()
-        #self.display.stop()
+
     def setShow(self, show):
         self.show = show
         print "Current show is " + self.show["name"]
 
     def close(self):
         self.driver.quit()
+        #self.display.stop()
 
     def popupHandler(self):
         #removal of popup
@@ -108,9 +124,9 @@ class seriesOnline():
     def googleVid(self):
         self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
         return self.driver.find_element_by_tag_name('video').get_attribute('src')
+        print "Video src is from googledirector"
 
     def openload(self):
-        print "openload video"
         self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
         pops = self.driver.find_element_by_id('videooverlay')
@@ -121,6 +137,7 @@ class seriesOnline():
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
         print self.driver.find_element_by_tag_name('video').get_attribute('src')
         return self.driver.find_element_by_tag_name('video').get_attribute('src')
+        print "Video src is from openload"
 
     def downloadEpisode(self,link,eTitle):
             print "Downloading " + eTitle
