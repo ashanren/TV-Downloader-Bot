@@ -32,7 +32,7 @@ class seriesOnline():
             self.driver.get('https://seriesonline.is/movie/search/'+title)
         except TimeoutException:
             print "Trying to bypass Timeout Exception"
-            self.driver.execute_script("return window.stop();")
+            self.driver.execute_script("$(window.stop())")
         print "finished loading page"
         #try:
         #    self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "ml-item")))
@@ -51,34 +51,23 @@ class seriesOnline():
             episode.click()
             print title
         except TimeoutException:
-            self.driver.execute_script("return window.stop();")
+            self.driver.execute_script("$(window.stop())")
         self.popupHandler()
         #go to episodes
         try:
             self.driver.find_element_by_xpath('//a[contains(@href, "watching")]').click()
         except TimeoutException:
-            self.driver.execute_script("return window.stop();")
+            self.driver.execute_script("$(window.stop())")
+	
+	#episode list
+	episodes = self.driver.find_elements_by_xpath('/html/body/div[2]/div[1]/div[2]/div[2]/div[7]/div[1]/div[2]/a')	
         #find correct episode
         for ep in self.show["episodes"]:
-            #bad option for finding current episode 
-            #if self.driver.current_url[-2:-1] == "=":
-            #    self.driver.get(self.driver.current_url[:-1] + ep)
-            #else:
-            #    self.driver.get(self.driver.current_url[:-2] + ep)
-            if len(ep) == 1:
-                ep = '0'+ep
-
-            #finds current episode link
-            try:
-                servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep+'")]')
-            except Exception as e:
-                servereps = self.driver.find_elements_by_xpath('//a[contains(@title, "Episode '+ep[1]+'")]')
-                
-            #Creates file name
             if ep[0] == '0':
-                eTitle = title + " Episode " + ep[1] + ".mp4" 
-            else:
-                eTitle = title + " Episode " + ep + ".mp4" 
+                ep = ep[1]
+
+            #creates title
+	    eTitle = title + " Episode " + ep + ".mp4" 
             #handles current issue with bar on the bottom of screen
             try:
                 self.driver.find_element_by_xpath('//div[@class="thumb mvic-thumb"]').click()
@@ -86,15 +75,15 @@ class seriesOnline():
             except Exception as e:
                 print "Can't find picture"
             #clicks on proper episode
-            try:
-                servereps[0].click()
-            except TimeoutException:
-                self.driver.execute_script("return window.stop();")
-            except Exception as e:
-                print "Error: " + str(e)
-            
+            if (len(episodes) - int(ep)) >= 0:
+                episodes[len(episodes) - int(ep)].click()
+            else:
+		print "Invalid Episode"
+		continue
+                #self.driver.execute_script("return window.stop();")
             #switch to iframe
             print "Finding Video src"
+	    print self.driver.current_url
             try:
                 link = self.googleVid()
             except Exception as e:
@@ -122,7 +111,12 @@ class seriesOnline():
             print "no popup appeared"
 
     def googleVid(self):
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
+	try:
+	    self.wait.until(EC.presence_of_element_located((By.XPATH, '//video[contains(@src,"google")]')))
+	except Exception as e:
+	    print "Jarel OR Deep Error: " + str(e)
+
         return self.driver.find_element_by_tag_name('video').get_attribute('src')
         print "Video src is from googledirector"
 
