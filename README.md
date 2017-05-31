@@ -1,11 +1,14 @@
 # TV-Downloader-Bot
 
-Application to download tv shows and movies from various websites.
+Application to download tv shows and movies.
 
-Fmovie have been recently updated so bot not working currently.
+Fmovie is operational.
 
 Seriesonline is operational.
 
+Sezonlukdizi initial commit. Not operational.
+
+Pelispedia initial commit. Not operational.
 
 # Core Dependencies
 

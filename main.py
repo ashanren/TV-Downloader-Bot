@@ -1,5 +1,6 @@
 from seriesonline import seriesOnline as so
 from sezonlukdizi import sezonlukdizi as sld
+from fmovie import fmovie as fm
 #from watch5s import watch5s as ws
 import json
 import os
@@ -18,6 +19,7 @@ except Exception as e:
     print "Error: "+ str(e)
 
 s = so()
+#f = fm()
 #sd = sld()
 #w = ws()
 

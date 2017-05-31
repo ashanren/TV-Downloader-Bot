@@ -1,4 +1,3 @@
-import json
 import wget
 import os
 import time

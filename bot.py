@@ -21,7 +21,7 @@ class tvBot():
         #display = Display(visible=0, size=(800,600))
         #display.start()
         self.driver = webdriver.Chrome(self.chromedriver)
-        self.driver.set_page_load_timeout(10)
+        self.driver.set_page_load_timeout(30)
         self.wait = WebDriverWait(self.driver, 10)
 
     def start(self):
@@ -44,18 +44,18 @@ class tvBot():
         print "Current show is " + self.show["name"]
 
     def googleVid(self):
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
         return self.driver.find_element_by_tag_name('video').get_attribute('src')
 
     def openload(self):
         print "openload video"
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
         pops = self.driver.find_element_by_id('videooverlay')
         pops.click()
         self.popupHandler()
         #not sure why i need to do this yet but w/e
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
         print self.driver.find_element_by_tag_name('video').get_attribute('src')
         return self.driver.find_element_by_tag_name('video').get_attribute('src')

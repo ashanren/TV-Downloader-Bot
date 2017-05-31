@@ -21,7 +21,7 @@ class seriesOnline():
         #display = Display(visible=0, size=(800,600))
         #display.start()
         self.driver = webdriver.Chrome(self.chromedriver)
-        self.driver.set_page_load_timeout(15)
+        self.driver.set_page_load_timeout(30)
         self.wait = WebDriverWait(self.driver, 10)
 
     def start(self):
@@ -83,11 +83,11 @@ class seriesOnline():
                 #self.driver.execute_script("return window.stop();")
             #switch to iframe
             print "Finding Video src"
-	    print self.driver.current_url
             try:
                 link = self.googleVid()
             except Exception as e:
                 link = self.openload()
+            print link
             #threading for multi downlaoding support. Need to add a limit of 3-4 downloads
             threading.Thread(target=self.downloadEpisode, args=(link,eTitle,)).start()
             print "Switching back to main page"
@@ -121,13 +121,15 @@ class seriesOnline():
         print "Video src is from googledirector"
 
     def openload(self):
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
-        self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
-        pops = self.driver.find_element_by_id('videooverlay')
-        pops.click()
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
+        print "switch to initial iframe"
+        #self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
+        print "gets to secondary iframe"
+        self.driver.find_element_by_id('videooverlay').click()
         self.popupHandler()
         #not sure why i need to do this yet but w/e
-        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//*[@id="media-player"]/div/iframe'))
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath('//iframe[1]'))
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name('iframe'))
         print self.driver.find_element_by_tag_name('video').get_attribute('src')
         return self.driver.find_element_by_tag_name('video').get_attribute('src')
