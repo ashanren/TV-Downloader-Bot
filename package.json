@@ -2,10 +2,15 @@
   "name": "tv-crawler",
   "version": "1.0.0",
   "description": "A Python bot for scraping tv and movie episodes from various websites",
-  "main": "main.py",
+  "main": "static/main.js",
   "scripts": {
-    "start" : "python seriesonline.py",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "python server.py & electron .",
+    "test": "python bots/main.py",
+    "watch": "watchify static/app.js -t babelify -o static/build/bundle.js --debug --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashanren/TV-Downloader-Bot"
   },
   "keywords": [
     "watch5s",
@@ -18,6 +23,18 @@
   "author": "Jarel Pellew",
   "license": "GPL-3.0",
   "dependencies": {
-    "phantomjs-prebuilt": "^2.1.14"
+    "classnames": "^2.2.5",
+    "electron": "^1.6.10",
+    "react": "^15.5.4",
+    "react-bootstrap": "^0.31.0",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "electron-reload": "^1.2.1",
+    "watchify": "^3.9.0"
   }
 }
