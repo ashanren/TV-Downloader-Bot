@@ -4,3 +4,4 @@ node_modules/
 video_files.conf
 chromedriver
 chromedriver_linux64
+static/build/bundle.js
